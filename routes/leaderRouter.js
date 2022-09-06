@@ -4,10 +4,11 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Leader = require('../models/leaders');
 const leadRouter = express.Router();
+var authenticate = require('../authenticate');
 leadRouter.use(bodyParser.json());
 
 leadRouter.route('/')
-.get((req,res,next) => {
+.get(authenticate.verifyUser,(req,res,next) => {
     Leader.find({})
     .then((lead) => {
         res.statusCode = 200;
@@ -16,7 +17,7 @@ leadRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(authenticate.verifyUser,(req, res, next) => {
     Leader.create(req.body)
     .then((lead) => {
         console.log('Leaders Created ', lead);
@@ -26,11 +27,11 @@ leadRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.put((req, res, next) => {
+.put(authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /leaders');
 })
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser,(req, res, next) => {
     Leader.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -41,7 +42,7 @@ leadRouter.route('/')
 });
 
 leadRouter.route('/:leadId')
-.get((req,res,next) => {
+.get(authenticate.verifyUser,(req,res,next) => {
     Leader.findById(req.params.leadId)
     .then((lead) => {
         res.statusCode = 200;
@@ -50,11 +51,11 @@ leadRouter.route('/:leadId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(authenticate.verifyUser,(req, res, next) => {
     res.statusCode = 403;
     res.end('POST operation not supported on /leaders/'+ req.params.promoId);
 })
-.put((req, res, next) => {
+.put(authenticate.verifyUser,(req, res, next) => {
     Leader.findByIdAndUpdate(req.params.leadId, {
         $set: req.body
     }, { new: true })
@@ -65,7 +66,7 @@ leadRouter.route('/:leadId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser,(req, res, next) => {
     Leader.findByIdAndRemove(req.params.leadId)
     .then((resp) => {
         res.statusCode = 200;
