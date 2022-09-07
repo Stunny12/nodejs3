@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const Dishes = require('./models/dishes');
 const url = config.mongoUrl;
 const connect = mongoose.connect(url);
+const cors = require('cors');
 
 connect.then((db) => {
     console.log("Connected correctly to server");
@@ -55,7 +56,9 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/imageUpload',uploadRouter);
 
-
+/*app.use(cors({
+  origin: ['http://localhost:3000', 'https://localhost:3443']
+}));*/
 
 function auth (req, res, next) {
   console.log(req.user);

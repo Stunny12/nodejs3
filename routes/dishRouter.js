@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const mongoose = require('mongoose');
 const Dishes = require('../models/dishes');
 var authenticate = require('../authenticate');
@@ -11,7 +10,7 @@ dishRouter.use(bodyParser.json());
 
 dishRouter.route('/')
 .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
-.get(cors.cors,(req,res,next) => {
+.get(cors.corsWithOptions, (req,res,next) => {
     Dishes.find({})
     .populate('comments.author')
     .then((dishes) => {
@@ -21,7 +20,7 @@ dishRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post(cors.corsWithOptions,authenticate.verifyAdmin,(req, res, next) => {
+.post(cors.corsWithOptions, authenticate.verifyAdmin,(req, res, next) => {
     Dishes.create(req.body)
     .then((dish) => {
         console.log('Dish Created ', dish);
@@ -176,6 +175,10 @@ dishRouter.route('/:dishId/comments/:commentId')
         }
     }, (err) => next(err))
     .catch((err) => next(err));
+})
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    res.statusCode = 403;
+    res.end('POST operation is not supported on /dishes/' + req.params.dishId + '/comments/' + req.params.commentId);
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId).then((dish) => {
