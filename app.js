@@ -21,6 +21,7 @@ var dishRouter = require('./routes/dishRouter');
 var promoRouter = require('./routes/promoRouter');
 var leaderRouter = require('./routes/leaderRouter');
 const uploadRouter = require('./routes/uploadRouter');
+var favouriteRouter = require('./routes/favouriteRouter');
 var passport = require('passport');
 var authenticate = require('./authenticate');
 
@@ -55,6 +56,7 @@ app.use('/leaders',leaderRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/imageUpload',uploadRouter);
+app.use('/favorites', favouriteRouter);
 
 /*app.use(cors({
   origin: ['http://localhost:3000', 'https://localhost:3443']
@@ -62,12 +64,13 @@ app.use('/imageUpload',uploadRouter);
 
 function auth (req, res, next) {
   console.log(req.user);
-  if (!req.user) {
+if (!req.user) {
     var err = new Error('You are not authenticated!');
     err.status = 403;
     next(err);
   }
-  else {
+  else 
+  {
         next();
   }
 }
